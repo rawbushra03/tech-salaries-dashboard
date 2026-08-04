@@ -11,7 +11,7 @@ An interactive dashboard to analyze global tech salaries, focusing on Data Scien
 ---
 
 ## 🔗 Live Demo
-[View Dashboard on Streamlit Cloud](https://bushra-tech-salaries.streamlit.app/) *(Placeholder)*
+[View Dashboard on Streamlit Cloud](https://tech-salaries-dashboard-bushra-rawat.streamlit.app/) *(Placeholder)*
 
 ---
 
