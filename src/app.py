@@ -133,9 +133,23 @@ fig_heat = px.imshow(heatmap_data, text_auto=True, aspect="auto",
                       labels=dict(x="Region", y="Job Role", color="Avg Salary"))
 st.plotly_chart(fig_heat, use_container_width=True)
 
-# Data Table
-st.subheader("Raw Data Preview")
-st.dataframe(filtered_df[['work_year', 'experience_level_name', 'job_title', 'salary_in_usd', 'region', 'remote_status']].head(100), use_container_width=True)
+# Visualizations Row 3: LATAM vs US Comparison
+st.subheader("🌎 LATAM vs US vs Global Comparison")
+comparison_df = filtered_df.groupby('region')['salary_in_usd'].mean().sort_values(ascending=False).reset_index()
+fig_comp = px.bar(comparison_df, x='region', y='salary_in_usd', 
+                  color='region', title="Average Salary by Region (USD)",
+                  labels={'salary_in_usd': 'Avg Salary (USD)', 'region': 'Region'})
+st.plotly_chart(fig_comp, use_container_width=True)
+
+# Download Button
+st.sidebar.markdown("---")
+csv = filtered_df.to_csv(index=False).encode('utf-8')
+st.sidebar.download_button(
+    label="📥 Download filtered data",
+    data=csv,
+    file_name='tech_salaries_filtered.csv',
+    mime='text/csv',
+)
 
 # Key Insights
 st.markdown("---")
