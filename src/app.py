@@ -22,18 +22,28 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Data Loading with Fallback
-@st.cache_data
+# Data Loading with URL and Fallback
+@st.cache_data(ttl=3600)
 def load_data():
-    path = 'data/salaries_cleaned.csv'
-    if not os.path.exists(path):
-        # Fallback to creating it if possible
-        if os.path.exists('data/salaries_raw.csv'):
-            from data_loader import load_and_clean_data
-            return load_and_clean_data()
+    url = "https://raw.githubusercontent.com/foorilla/ai-jobs-net-salaries/main/salaries.csv"
+    try:
+        df = pd.read_csv(url)
+        from data_loader import clean_data
+        df = clean_data(df)
+        st.sidebar.success("Loaded real-time data from GitHub!")
+        return df
+    except Exception as e:
+        st.warning(f"Could not load real-time data from URL, using local cache. Error: {e}")
+        path = 'data/salaries_cleaned.csv'
+        if os.path.exists(path):
+            return pd.read_csv(path)
         else:
-            return None
-    return pd.read_csv(path)
+            # Fallback to creating it if possible
+            if os.path.exists('data/salaries_raw.csv'):
+                from data_loader import load_and_clean_data
+                return load_and_clean_data()
+            else:
+                return None
 
 df = load_data()
 
