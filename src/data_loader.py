@@ -1,16 +1,10 @@
 import pandas as pd
 import os
 
-def load_and_clean_data(raw_path='data/salaries_raw.csv', cleaned_path='data/salaries_cleaned.csv'):
+def clean_data(df):
     """
-    Loads, cleans and standardizes the tech salaries dataset.
+    Cleans and standardizes the tech salaries dataframe.
     """
-    if not os.path.exists(raw_path):
-        print(f"Error: {raw_path} not found.")
-        return None
-
-    df = pd.read_csv(raw_path)
-
     # 1. Basic Cleaning
     df = df.drop_duplicates()
     df = df.dropna()
@@ -22,7 +16,7 @@ def load_and_clean_data(raw_path='data/salaries_raw.csv', cleaned_path='data/sal
     # Map 2-letter country codes to Regions
     region_map = {
         'US': 'US',
-        'CA': 'US', # Grouping Canada with US as North America (or keep separate if preferred)
+        'CA': 'US', # Grouping Canada with US as North America
         'GB': 'EU', 'DE': 'EU', 'FR': 'EU', 'ES': 'EU', 'IT': 'EU', 'NL': 'EU', 'PT': 'EU', 'PL': 'EU', 'GR': 'EU', 'DK': 'EU', 'FI': 'EU', 'SE': 'EU',
         'BR': 'LATAM', 'MX': 'LATAM', 'CO': 'LATAM', 'AR': 'LATAM', 'CL': 'LATAM', 'PE': 'LATAM', 'PR': 'LATAM',
         'IN': 'ASIA', 'CN': 'ASIA', 'JP': 'ASIA', 'SG': 'ASIA', 'PK': 'ASIA', 'TH': 'ASIA', 'VN': 'ASIA',
@@ -52,6 +46,18 @@ def load_and_clean_data(raw_path='data/salaries_raw.csv', cleaned_path='data/sal
         else: return 'On-site'
     
     df['remote_status'] = df['remote_ratio'].apply(get_remote_status)
+    return df
+
+def load_and_clean_data(raw_path='data/salaries_raw.csv', cleaned_path='data/salaries_cleaned.csv'):
+    """
+    Loads, cleans and standardizes the tech salaries dataset from a local path.
+    """
+    if not os.path.exists(raw_path):
+        print(f"Error: {raw_path} not found.")
+        return None
+
+    df = pd.read_csv(raw_path)
+    df = clean_data(df)
 
     # Save cleaned data
     df.to_csv(cleaned_path, index=False)
